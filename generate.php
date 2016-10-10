@@ -11,7 +11,7 @@ getdois();
 function getdois() {
   $filename = 'dois.txt';
   $contents = file($filename);
-  //$indexFile = fopen("index.json", "w") or die("Unable to open file!");
+  mkdir('documents', 0755, true);
   $indexArray = Array();
   $i = 0;
   foreach($contents as $line) {
@@ -23,7 +23,6 @@ function getdois() {
 		  $jsonDoi = json_encode(array('index'=> $indexArray));
 	  }
 	  $i++;
-	  //return;
   }
   file_put_contents("index.json", $jsonDoi) or die("Unable to write file");	
   return true;
@@ -50,9 +49,6 @@ function generateDetails($url, $id) {
 			return false;
 		} else {
 			$doiString = json_decode($doiDetails, true);
-			//print "<pre>";
-			//print_r($doiString["message"]);
-			//print "</pre>";
 			$publisher = trim($doiString["message"]["publisher"]);
 			$paperTitle = strip_tags(trim($doiString["message"]["title"][0]));
 			$regexTitle = preg_split("^[a-zA-Z0-9]{4,32}$^", $paperTitle);
@@ -67,7 +63,6 @@ function generateDetails($url, $id) {
 function saveJsonToFile($json, $filename) {
 	if($filename) {
 	$filename = str_replace("/", "", $filename);
-	print $filename;
 	$jsonFile = DOCUMENTS . trim($filename) . ".json";
 	
 	file_put_contents($jsonFile, $json);
