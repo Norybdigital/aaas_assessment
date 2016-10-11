@@ -11,7 +11,7 @@ getdois();
 function getdois() {
   $filename = 'dois.txt';
   $contents = file($filename);
-  mkdir('documents', 0755, true);
+  mkdir('documents', 0777, true);
   $indexArray = Array();
   $i = 0;
   foreach($contents as $line) {
