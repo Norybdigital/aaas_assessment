@@ -20,11 +20,23 @@
 			<div>Issue: <?php print $detailsArray['message']['issue']; ?></div>
 			<div>Reference Count: <?php print $detailsArray['message']['reference-count']; ?></div>
 			<div>DOI: <a href="<?php print $detailsArray['message']['URL'] ;?>"target="_blank"><?php print $detailsArray['message']['URL']; ?></a></div>
-			<div>Date: <?php print $detailsArray['message']['publisher']; ?></div>
-			<div>Type: <?php print $detailsArray['message']['type']; ?></div>
-			<div class="authors">Author(s): <?php printAuthors($detailsArray['message']['author']); ?></div>
-			<div>Volume: <?php print $detailsArray['message']['volume']; ?></div>
-			<div>Subject: <?php print $detailsArray['message']['subject'][0]; ?></div>
+			<?php if(isset($detailsArray['message']['publisher'])) { ?>
+				<div>Date: <?php print $detailsArray['message']['publisher']; ?></div>
+			<?php } ?>		
+			<?php if(isset($detailsArray['message']['type'])) { ?>
+				<div>Type: <?php print $detailsArray['message']['type']; ?></div>
+			<?php } ?>		
+			<?php if(isset($detailsArray['message']['author'])) { ?>
+				<div class="authors">Author(s): <?php printAuthors($detailsArray['message']['author']); ?></div>
+			<?php } ?>
+			
+			<?php if(isset($detailsArray['message']['volume'])) { ?>
+				<div>Volume: <?php print $detailsArray['message']['volume']; ?></div>
+			<?php } ?>			
+			
+			<?php if(isset($detailsArray['message']['subject'][0])) { ?>
+				<div>Subject: <?php print $detailsArray['message']['subject'][0]; ?></div>
+			<?php } ?>
 <?php			
 			}
 		} else {
