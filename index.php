@@ -1,22 +1,22 @@
-<h1>Index Pages</h1>
-<?php if(!file_exists("index.json")) { ?>
+<h1>Index Page</h1>
+<?php
+	//Check if the index.json file exists. If it doesn't, you'll need to create one first.
+	if(!file_exists("index.json")) { 
+?>
 	<div id="generateButtonLabel">You'll need to generate data before you can see the list of DOIs</div><br />
 	<a href="generate.php">Generate</a>
 <?php } else { ?>
 
 <?php
+	//Get the contents of the index.json file and convert it from json to a multidimensional array.
 	$doiIndex = file_get_contents("index.json");
 	$doiArray = json_decode($doiIndex, true);
 	$i = 0;
-	foreach($doiArray['index'] as $key => $row) {
-		//print_r($row);
-		$publisher[$key] = $row['publisher'];
-		$title[$key] = $row['title'];
-	}
-	array_multisort($publisher, SORT_ASC, $title, SORT_ASC, $doiArray['index']);
-	//print_r($doiArray);
+	
 	$doiPublisher = '';
 	$publisherCount = 0;
+	$lastTitle = '';
+	//iterate through the array.  If the previous item has the same 
 	foreach ($doiArray as $item) {
 		foreach ($item as $doi) {
 			$id = $doi['id'];

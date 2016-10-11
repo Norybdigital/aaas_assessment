@@ -8,34 +8,44 @@ define("DOCUMENTS", "documents/");
 
 getdois();
 
+//This function reads through the list of dois in doi.txt and generates an individual json file for each one.  It then generates an index.json file containing basic information on each doi.
 function getdois() {
+
   $filename = 'dois.txt';
   $contents = file($filename);
-  mkdir('documents', 0777, true);
+
+  //create a document directory, just in case one doesn't exist.
+  mkdir('documents', 0775, true);
   $indexArray = Array();
   $i = 0;
+  $lastTitle = '';
   foreach($contents as $line) {
 	  $line = trim($line);
 	  $doiData = generateDetails($line, $i);
-	  if($doiData) {
+
+	  if($doiData && $doiData['title'] !== $lastTitle) {
 	  	$doiArray = Array("doiFile"=> $line, "publisher"=>$doiData["publisher"], "title"=>$doiData["title"], "url"=> "http://dx.doi.org/". $line, "id"=> $i, "filename"=>$doiData['filename']);
 	  	$indexArray[$i] = $doiArray;
-		  $jsonDoi = json_encode(array('index'=> $indexArray));
 	  }
+	  $lastTitle = $doiData['title'];
+
 	  $i++;
   }
+ 
+  foreach($indexArray as $key => $row) {
+		$publisher[$key] = $row['publisher'];
+		$title[$key] = $row['title'];
+	}
+	array_multisort($publisher, SORT_ASC, $title, SORT_ASC, $indexArray);
+
+  $jsonDoi = json_encode(array('index'=> $indexArray));
   file_put_contents("index.json", $jsonDoi) or die("Unable to write file");	
   return true;
 }
- /**
-  * Creates a new json document using the information provided by CrossRef
-  *
-  * @param      string $url the url of the DOI
-  *
-  * @return     array  Returns the publisher's name and the paper name
-  */
+
+//This functions uses curl to fetch the content of a DOI and creates a JSON document. 
 function generateDetails($url, $id) {
-	
+	//set up curl call
 	$curl = curl_init();
 	$doi = CROSSREF . trim($url);
 
@@ -60,13 +70,18 @@ function generateDetails($url, $id) {
 	return $doiReturn;
 }
 
+//Actually creates the json file
 function saveJsonToFile($json, $filename) {
 	if($filename) {
-	$filename = str_replace("/", "", $filename);
-	$jsonFile = DOCUMENTS . trim($filename) . ".json";
-	
-	file_put_contents($jsonFile, $json);
-		return $jsonFile;	
+		$filename = str_replace("/", "", $filename);
+		$jsonFile = DOCUMENTS . trim($filename) . ".json";
+		if($jsonFile && $json) {
+			file_put_contents($jsonFile, $json);
+		return $jsonFile;		
+		}
+		else 
+			return false;
+		
 	}
 	else 
 		return false;

@@ -1,9 +1,7 @@
 <pre>
 <h1>Details Page</h1>
 <?php
-	// Using the id in the querystring, find the file and display the data for it.
-	// 
-	//
+	//using the id number passed through the querystring, find the article with the corresponding id and display its details
 	if($_GET['id'] >= 0) {
 		$doiId = $_GET['id'];
 
