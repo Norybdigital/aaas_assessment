@@ -23,22 +23,23 @@ function getdois() {
 	  $line = trim($line);
 	  $doiData = generateDetails($line, $i);
 
-	  if($doiData && $doiData['title'] !== $lastTitle) {
-	  	$doiArray = Array("doiFile"=> $line, "publisher"=>$doiData["publisher"], "title"=>$doiData["title"], "url"=> "http://dx.doi.org/". $line, "id"=> $i, "filename"=>$doiData['filename']);
+	  if($doiData && $doiData["title"] !== $lastTitle) {
+	  	$doiArray = Array("doiFile"=> $line, "publisher"=>$doiData["publisher"], "title"=>$doiData["title"], "url"=> "http://dx.doi.org/". $line, "id"=> $i, "filename"=>$doiData["filename"]);
 	  	$indexArray[$i] = $doiArray;
+	  	$lastTitle = $doiData["title"];
 	  }
-	  $lastTitle = $doiData['title'];
+	  
 
 	  $i++;
   }
  
   foreach($indexArray as $key => $row) {
-		$publisher[$key] = $row['publisher'];
-		$title[$key] = $row['title'];
+		$publisher[$key] = $row["publisher"];
+		$title[$key] = $row["title"];
 	}
 	array_multisort($publisher, SORT_ASC, $title, SORT_ASC, $indexArray);
 
-  $jsonDoi = json_encode(array('index'=> $indexArray));
+  $jsonDoi = json_encode(array("index"=> $indexArray));
   file_put_contents("index.json", $jsonDoi) or die("Unable to write file");	
   return true;
 }
@@ -61,7 +62,7 @@ function generateDetails($url, $id) {
 			$doiString = json_decode($doiDetails, true);
 			$publisher = trim($doiString["message"]["publisher"]);
 			$paperTitle = strip_tags(trim($doiString["message"]["title"][0]));
-			$regexTitle = preg_split("^[a-zA-Z0-9]{4,32}$^", $paperTitle);
+			$regexTitle = preg_split("^[a-zA-Z0-9]{2,32}$^", $paperTitle);
 			$filename = saveJsonToFile($doiDetails, $regexTitle[0]);		
 			$doiReturn = array("publisher" => $publisher, "title" => $paperTitle, "filename"=> $filename);
 		}
